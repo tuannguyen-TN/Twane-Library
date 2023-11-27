@@ -9,7 +9,7 @@ This project requires implementation of TypeScript and SASS.
 
 ## Requirement
 
-1. Use the API endpoint [https://fakeapi.platzi.com/](https://fakeapi.platzi.com/) to create an e-commerce website. Read the documentation and learn how to use the different endpoints.
+1. Use the API endpoint from your backend project to create an e-commerce website.
 2. Create at lease 4 pages (can be more if you want): Page for all products, product page,
    profile page (only available if user logins), and cart page (cart page could be a page or a modal)
 3. Create Redux store for following features:
