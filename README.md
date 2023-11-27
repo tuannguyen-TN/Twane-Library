@@ -1,4 +1,4 @@
-# Front-end Project
+# Front-end Project for Full-stack
 
 ![React](https://img.shields.io/badge/React-v.18-blue)
 ![Redux toolkit](https://img.shields.io/badge/RTK-v.1-purple)
