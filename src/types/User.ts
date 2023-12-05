@@ -1,3 +1,5 @@
+import { Role } from './Role'
+
 export type User = {
   _id: string
   firstName: string
@@ -7,4 +9,5 @@ export type User = {
   phoneNumber: string
   avatar: string
   password: string
+  role: Role[]
 }

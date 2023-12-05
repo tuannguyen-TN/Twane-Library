@@ -1,12 +1,20 @@
 import React from 'react'
-import { AppBar, Stack, Toolbar, Typography } from '@mui/material'
+import { AppBar, Avatar, Stack, Toolbar, Typography } from '@mui/material'
 import { Link } from 'react-router-dom'
 
 import { useThemeContext } from '../hooks/useThemeContext'
 import MaterialUISwitch from './MaterialUISwitch'
+import { userLogout } from '../redux/reducers/userReducer'
+import { useAppSelector } from '../hooks/useAppSelector'
+import { StateType } from '../redux/store/store'
+import { useAppDispatch } from '../hooks/useAppDispatch'
 
 const Navbar = () => {
   const { isDarkTheme, setIsDarkTheme } = useThemeContext()
+  const { isLoggedIn, user } = useAppSelector(
+    (state: StateType) => state.userReducer
+  )
+  const dispatch = useAppDispatch()
 
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (setIsDarkTheme) {
@@ -49,7 +57,7 @@ const Navbar = () => {
               🛒
             </Typography>
           </Link>
-          <Stack direction="row" spacing={5}>
+          {/* <Stack direction="row" spacing={5}>
             <Link to="/register" style={{ textDecoration: 'none' }}>
               <Typography variant="h6" color="inherit" noWrap>
                 Sign up
@@ -60,8 +68,8 @@ const Navbar = () => {
                 Login
               </Typography>
             </Link>
-          </Stack>
-          {/* {isLoggedIn ? (
+          </Stack> */}
+          {isLoggedIn ? (
             <Stack direction="row" spacing={5}>
               <Link to="/profile" style={{ textDecoration: 'none' }}>
                 <Avatar src={user?.avatar} />
@@ -89,7 +97,7 @@ const Navbar = () => {
                 </Typography>
               </Link>
             </Stack>
-          )} */}
+          )}
         </Stack>
       </Toolbar>
     </AppBar>

@@ -11,6 +11,8 @@ import Footer from './components/Footer'
 import ErrorPage from './pages/ErrorPage'
 import Navbar from './components/Navbar'
 import RegisterPage from './pages/RegisterPage'
+import LoginPage from './pages/LoginPage'
+import ProfilePage from './pages/ProfilePage'
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true)
@@ -71,8 +73,8 @@ const App = () => {
                 <Route path="/books">
                   <Route path=":id" element={null} />
                 </Route>
-                <Route path="/profile" element={null} />
-                <Route path="/login" element={null} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/cart" element={null} />
                 <Route path="*" element={<ErrorPage />} />
