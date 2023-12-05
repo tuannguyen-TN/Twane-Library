@@ -38,9 +38,13 @@ const RegisterForm = () => {
     }
 
     const res = await dispatch(userRegister(newUser))
+    console.log(res)
+
     if (res.meta.requestStatus === 'fulfilled') {
       toast.success('Signed up successfully!')
       navigate('/login')
+    } else {
+      toast.error(res.payload?.toString())
     }
   }
 

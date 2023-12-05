@@ -65,7 +65,12 @@ export const userRegister = createAsyncThunk<
   { rejectValue: string }
 >('user/userRegister', async (newUser: Partial<User>, { rejectWithValue }) => {
   try {
-    const res = await axios.post(`${baseUrl}/users/signup`, newUser)
+    const res = await axios.post(
+      `https://library-management-system-api-172j.onrender.com/api/v1/users/signup`,
+      newUser
+    )
+    console.log(res)
+
     return res.data
   } catch (e) {
     const err = e as Error

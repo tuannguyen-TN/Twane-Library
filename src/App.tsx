@@ -3,7 +3,7 @@ import { ToastContainer } from 'react-toastify'
 import { Box, Container, CssBaseline, Typography } from '@mui/material'
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
 
-// import 'react-toastify/dist/ReactToastify.css'
+import 'react-toastify/dist/ReactToastify.css'
 
 import { ThemeContext } from './contexts/ThemeContext'
 import ThemeDisplay from './components/ThemeDisplay'
