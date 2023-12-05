@@ -3,13 +3,14 @@ import { ToastContainer } from 'react-toastify'
 import { Box, Container, CssBaseline, Typography } from '@mui/material'
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
 
-import 'react-toastify/dist/ReactToastify.css'
+// import 'react-toastify/dist/ReactToastify.css'
 
 import { ThemeContext } from './contexts/ThemeContext'
 import ThemeDisplay from './components/ThemeDisplay'
 import Footer from './components/Footer'
 import ErrorPage from './pages/ErrorPage'
 import Navbar from './components/Navbar'
+import RegisterPage from './pages/RegisterPage'
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true)
@@ -63,7 +64,7 @@ const App = () => {
           </Box>
 
           <main style={{ minHeight: 'calc(100vh - 290px)' }}>
-            <Container sx={{ py: 8 }} maxWidth="lg">
+            <Container sx={{ py: 5 }} maxWidth="lg">
               <Routes>
                 <Route path="/" element={null} />
                 <Route path="/books" element={null} />
@@ -72,7 +73,7 @@ const App = () => {
                 </Route>
                 <Route path="/profile" element={null} />
                 <Route path="/login" element={null} />
-                <Route path="/register" element={null} />
+                <Route path="/register" element={<RegisterPage />} />
                 <Route path="/cart" element={null} />
                 <Route path="*" element={<ErrorPage />} />
               </Routes>
