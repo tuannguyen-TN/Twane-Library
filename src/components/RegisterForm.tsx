@@ -27,6 +27,7 @@ const RegisterForm = () => {
       lastName: data.lastName as string,
       email: data.email as string,
       password: data.password as string,
+      confirmPassword: data.confirmPassword as string,
       address: data.email as string,
       phoneNumber: data.email as string,
       avatar: data.avatar

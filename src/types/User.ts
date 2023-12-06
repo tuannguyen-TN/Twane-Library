@@ -9,5 +9,6 @@ export type User = {
   phoneNumber: string
   avatar: string
   password: string
+  confirmPassword: string
   role: Role[]
 }
