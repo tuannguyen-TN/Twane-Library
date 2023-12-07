@@ -7,8 +7,6 @@ import { AuthorizedToken } from '../../types/AuthorizedToken'
 import { UserCredentials } from '../../types/UserCredentials'
 import { BASE_URL } from '../../common/common'
 
-const baseUrl = BASE_URL
-
 export const initialUserState: UserReducerState = {
   user: null,
   fetching: false,
@@ -26,7 +24,7 @@ export const userLogin = createAsyncThunk<
   'user/userLogin',
   async ({ email, password }: UserCredentials, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${baseUrl}/users/signin`, {
+      const res = await axios.post(`${BASE_URL}/users/signin`, {
         email,
         password,
       })
@@ -46,7 +44,7 @@ export const fetchSingleUserInfo = createAsyncThunk<
   'user/fetchSingleUserInfo',
   async (accessToken: string, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${baseUrl}/users/profile`, {
+      const res = await axios.get(`${BASE_URL}/users/profile`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -65,7 +63,7 @@ export const userRegister = createAsyncThunk<
   { rejectValue: string }
 >('user/userRegister', async (newUser: Partial<User>, { rejectWithValue }) => {
   try {
-    const res = await axios.post(`${baseUrl}/users/signup`, newUser)
+    const res = await axios.post(`${BASE_URL}/users/signup`, newUser)
     return res.data
   } catch (e) {
     const err = e as Error

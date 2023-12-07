@@ -1,0 +1,95 @@
+import { BookMutationOptions } from './../../types/BookMutationOptions'
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+
+import { BASE_URL } from '../../common/common'
+import { AllBooksApiResponse } from '../../types/AllBooksApiResponse'
+import { Book } from '../../types/Book'
+
+const bookQueries = createApi({
+  reducerPath: 'bookApi',
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${BASE_URL}/books`,
+  }),
+  tagTypes: ['Book'],
+  endpoints: (builder) => ({
+    fetchAllBooks: builder.query<AllBooksApiResponse, void>({
+      query: () => '',
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.data.map(({ _id }) => ({
+                type: 'Book' as const,
+                _id,
+              })),
+              { type: 'Book', _id: 'LIST' },
+            ]
+          : [{ type: 'Book', _id: 'LIST' }],
+    }),
+    fetchSingleBook: builder.query<Book, string>({
+      query: (bookId) => `${bookId}`,
+    }),
+    deleteBook: builder.mutation<boolean, { bookId: string; token: string }>({
+      query: ({ bookId, token }) => ({
+        url: `${bookId}`,
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+      invalidatesTags: ['Book'],
+    }),
+    createBook: builder.mutation<
+      Book,
+      { newBook: BookMutationOptions; token: string }
+    >({
+      query: ({ newBook, token }) => ({
+        url: '',
+        method: 'POST',
+        body: newBook,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+      invalidatesTags: [{ type: 'Book', id: 'LIST' }],
+    }),
+    updateBook: builder.mutation<
+      Book,
+      Pick<Book, '_id'> & BookMutationOptions & { token: string }
+    >({
+      query: ({ _id, token, ...newValues }) => ({
+        url: `${_id}`,
+        method: 'PUT',
+        body: newValues,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+      async onQueryStarted({ _id, ...patch }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          bookQueries.util.updateQueryData(
+            'fetchSingleBook',
+            _id,
+            (draft: Book) => {
+              Object.assign(draft, patch)
+            }
+          )
+        )
+        try {
+          await queryFulfilled
+        } catch {
+          patchResult.undo()
+        }
+      },
+      invalidatesTags: [{ type: 'Book', id: 'LIST' }],
+    }),
+  }),
+})
+
+export const {
+  useFetchAllBooksQuery,
+  useFetchSingleBookQuery,
+  useDeleteBookMutation,
+  useCreateBookMutation,
+  useUpdateBookMutation,
+} = bookQueries
+export default bookQueries

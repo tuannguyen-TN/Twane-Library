@@ -13,6 +13,8 @@ import Navbar from './components/Navbar'
 import RegisterPage from './pages/RegisterPage'
 import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
+import AllBooksPage from './pages/AllBooksPage'
+import SingleBookPage from './pages/SingleBookPage'
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true)
@@ -69,9 +71,9 @@ const App = () => {
             <Container sx={{ py: 5 }} maxWidth="lg">
               <Routes>
                 <Route path="/" element={null} />
-                <Route path="/books" element={null} />
+                <Route path="/books" element={<AllBooksPage />} />
                 <Route path="/books">
-                  <Route path=":id" element={null} />
+                  <Route path=":id" element={<SingleBookPage />} />
                 </Route>
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/login" element={<LoginPage />} />

@@ -3,6 +3,7 @@ import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
 import userReducer, { initialUserState } from '../reducers/userReducer'
 import { UserReducerState } from '../../types/UserReducerState'
+import bookQueries from '../queries/bookQueries'
 
 const preLoadedUserReducer: UserReducerState = JSON.parse(
   localStorage.getItem('user') || JSON.stringify(initialUserState)
@@ -12,6 +13,7 @@ export const createStore = () =>
   configureStore({
     reducer: {
       userReducer,
+      [bookQueries.reducerPath]: bookQueries.reducer,
     },
     preloadedState: {
       // cartReducer: preLoadedCartReducer,
@@ -21,8 +23,8 @@ export const createStore = () =>
       // },
       userReducer: preLoadedUserReducer,
     },
-    // middleware: (getDefaultMiddleware) =>
-    //   getDefaultMiddleware().concat(productQueries.middleware),
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(bookQueries.middleware),
   })
 
 const store = createStore()
