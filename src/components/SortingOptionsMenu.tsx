@@ -7,16 +7,16 @@ import {
 } from '@mui/material'
 
 interface Props {
-  trends: string[]
+  trends: { id: string; trend: string }[]
   value: string
   onChange: (e: SelectChangeEvent) => void
 }
 
 const SortingOptionsMenu = ({ trends, value, onChange }: Props) => {
   return (
-    <FormControl variant="standard" sx={{ mx: 2, minWidth: 200 }}>
+    <FormControl variant="standard" sx={{ mx: 2, minWidth: 160 }}>
       <InputLabel id="sorting-options-select-label">
-        Sort products by name
+        Sort books by title
       </InputLabel>
       <Select
         labelId="sorting-options-select-label"
@@ -27,9 +27,9 @@ const SortingOptionsMenu = ({ trends, value, onChange }: Props) => {
       >
         <MenuItem value={''}>None</MenuItem>
         {trends
-          ? trends.map((item: string) => (
-              <MenuItem key={item} value={item}>
-                {item}
+          ? trends.map((item: { id: string; trend: string }) => (
+              <MenuItem key={item.id} value={item.id}>
+                {item.trend}
               </MenuItem>
             ))
           : null}

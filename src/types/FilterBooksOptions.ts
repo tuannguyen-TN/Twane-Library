@@ -2,8 +2,7 @@ export type FilterBooksOptions = {
   perPage: number
   page: number
   search: string
-  sortBy: string
-  sortOrder: number
+  sortOrder: string
   authorName: string
   categoryName: string
 }

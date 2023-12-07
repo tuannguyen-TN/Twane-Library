@@ -1,9 +1,10 @@
-import { BookMutationOptions } from './../../types/BookMutationOptions'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
+import { BookMutationOptions } from './../../types/BookMutationOptions'
 import { BASE_URL } from '../../common/common'
 import { AllBooksApiResponse } from '../../types/AllBooksApiResponse'
 import { Book } from '../../types/Book'
+import { FilterBooksOptions } from '../../types/FilterBooksOptions'
 
 const bookQueries = createApi({
   reducerPath: 'bookApi',
@@ -12,8 +13,23 @@ const bookQueries = createApi({
   }),
   tagTypes: ['Book'],
   endpoints: (builder) => ({
-    fetchAllBooks: builder.query<AllBooksApiResponse, void>({
-      query: () => '',
+    fetchAllBooks: builder.query<AllBooksApiResponse, FilterBooksOptions>({
+      query: (filterOptions) =>
+        `?filter=1&perPage=${filterOptions.perPage}&page=${
+          filterOptions.page
+        }&search=${filterOptions.search}${
+          filterOptions.categoryName
+            ? '&categoryName=' + filterOptions.categoryName
+            : ''
+        }${
+          filterOptions.authorName
+            ? '&authorName=' + filterOptions.authorName
+            : ''
+        }${
+          filterOptions.sortOrder
+            ? '&sortBy=title&sortOrder=' + filterOptions.sortOrder
+            : ''
+        }`,
       providesTags: (result) =>
         result
           ? [

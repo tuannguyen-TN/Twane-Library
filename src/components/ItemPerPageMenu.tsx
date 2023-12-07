@@ -8,7 +8,7 @@ import {
 
 interface Props {
   quantities: number[]
-  value: string
+  value: number
   onChange: (e: SelectChangeEvent) => void
 }
 
@@ -19,7 +19,7 @@ const ItemPerPageMenu = ({ quantities, value, onChange }: Props) => {
       <Select
         labelId="item-per-page-select-label"
         id="item-per-page-select"
-        value={value}
+        value={value.toString()}
         onChange={onChange}
         label="Item per page"
       >
