@@ -9,17 +9,16 @@ import {
 } from '@mui/material'
 
 import { Category } from '../types/Category'
-import { useCategoriesContext } from '../hooks/useCategoriesContext'
+import { useAuthorsCategoriesContext } from '../hooks/useAuthorsCategoriesContext'
 
 interface Props {
-  isMultiple: boolean
   containsNone: boolean
-  value: string | string[]
-  onChange: (e: SelectChangeEvent<string | string[]>) => void
+  value: string
+  onChange: (e: SelectChangeEvent) => void
 }
 
-const CategoryMenu = ({ isMultiple, containsNone, value, onChange }: Props) => {
-  const categories = useCategoriesContext()
+const CategoryMenu = ({ containsNone, value, onChange }: Props) => {
+  const { categories } = useAuthorsCategoriesContext()
 
   return (
     <FormControl variant="standard" sx={{ minWidth: 100 }}>
@@ -27,8 +26,7 @@ const CategoryMenu = ({ isMultiple, containsNone, value, onChange }: Props) => {
       <Select
         labelId="category-select-label"
         id="category-select"
-        multiple={isMultiple}
-        value={isMultiple ? (value as string[]) : (value as string)}
+        value={value}
         onChange={onChange}
         label="Category"
       >
@@ -44,7 +42,6 @@ const CategoryMenu = ({ isMultiple, containsNone, value, onChange }: Props) => {
               <MenuItem
                 key={category._id}
                 value={category._id + ' ' + category.name}
-                // value={category.name}
               >
                 <Stack direction="row" spacing={1} alignItems="center">
                   <Typography>{category.name}</Typography>

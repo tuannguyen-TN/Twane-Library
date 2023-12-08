@@ -16,7 +16,7 @@ import {
 } from '../redux/queries/bookQueries'
 import { Category } from '../types/Category'
 import { BASE_URL } from '../common/common'
-import { CategoriesContext } from '../contexts/CategoriesContext'
+import { AuthorsCategoriesContext } from '../contexts/AuthorsCategoriesContext'
 import BookListDisplay from '../components/BookListDisplay'
 import CategoryMenu from '../components/CategoryMenu'
 import SortingOptionsMenu from '../components/SortingOptionsMenu'
@@ -26,10 +26,14 @@ import BookMutationFormDialog from '../components/BookMutationFormDialog'
 import { Book } from '../types/Book'
 import { StateType } from '../redux/store/store'
 import { useAppSelector } from '../hooks/useAppSelector'
+import { Author } from '../types/Author'
+import AuthorMenu from '../components/AuthorMenu'
 
 const AllBooksPage = () => {
   const { user } = useAppSelector((state: StateType) => state.userReducer)
 
+  const [allAuthors, setAllAuthors] = useState<Author[]>([])
+  const [loadingAuthors, setLoadingAuthors] = useState<boolean>(true)
   const [allCategories, setAllCategories] = useState<Category[]>([])
   const [loadingCategories, setLoadingCategories] = useState<boolean>(true)
   const [filterOptions, setFilterOptions] = useState<FilterBooksOptions>({
@@ -49,17 +53,26 @@ const AllBooksPage = () => {
     setAllCategories(res.data)
   }
 
+  const fetchAllAuthors = async () => {
+    const res = await axios.get<Author[]>(`${BASE_URL}/authors`)
+    setAllAuthors(res.data)
+  }
+
   useEffect(() => {
     fetchAllCategories()
     setLoadingCategories(false)
+    fetchAllAuthors()
+    setLoadingAuthors(false)
   }, [])
 
   return (
     <div>
-      {loadingCategories ? (
+      {loadingCategories || loadingAuthors ? (
         <Skeleton variant="rectangular" width="100%" height={400} />
       ) : (
-        <CategoriesContext.Provider value={allCategories}>
+        <AuthorsCategoriesContext.Provider
+          value={{ authors: allAuthors, categories: allCategories }}
+        >
           <Box>
             <Stack
               direction="row"
@@ -82,14 +95,24 @@ const AllBooksPage = () => {
                     })
                   }
                 />
-                <CategoryMenu
+                <AuthorMenu
                   isMultiple={false}
                   containsNone={true}
-                  value={filterOptions.categoryName}
+                  value={filterOptions.authorName}
                   onChange={(e: SelectChangeEvent<string | string[]>) =>
                     setFilterOptions({
                       ...filterOptions,
-                      categoryName: e.target.value as string,
+                      authorName: e.target.value as string,
+                    })
+                  }
+                />
+                <CategoryMenu
+                  containsNone={true}
+                  value={filterOptions.categoryName}
+                  onChange={(e: SelectChangeEvent) =>
+                    setFilterOptions({
+                      ...filterOptions,
+                      categoryName: e.target.value,
                     })
                   }
                 />
@@ -149,7 +172,7 @@ const AllBooksPage = () => {
               </Stack>
             )}
           </Box>
-        </CategoriesContext.Provider>
+        </AuthorsCategoriesContext.Provider>
       )}
     </div>
   )

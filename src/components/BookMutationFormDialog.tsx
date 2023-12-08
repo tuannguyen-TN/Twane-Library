@@ -14,6 +14,9 @@ import { toast } from 'react-toastify'
 import { BookMutationOptions } from '../types/BookMutationOptions'
 import { Book } from '../types/Book'
 import CategoryMenu from './CategoryMenu'
+import AuthorMenu from './AuthorMenu'
+import { useAppSelector } from '../hooks/useAppSelector'
+import { StateType } from '../redux/store/store'
 
 interface Props {
   book: Book
@@ -28,19 +31,24 @@ const BookMutationFormDialog = ({
   action,
   onSubmit,
 }: Props) => {
+  const { authorizedToken } = useAppSelector(
+    (state: StateType) => state.userReducer
+  )
+
   const [open, setOpen] = useState<boolean>(false)
   const { _id, ...restOfBook } = book
-  const [category, setCategory] = useState<string[]>([])
+  const [category, setCategory] = useState<string>('')
+  const [author, setAuthor] = useState<string[]>([])
   const [bookInfo, setBookInfo] = useState<BookMutationOptions>(
     action === 'Update'
       ? {
           ...restOfBook,
           author: restOfBook.author.reduce((acc: string[], curr) => {
-            acc.push(curr.fullName)
+            acc.push(curr._id)
             return acc
           }, []),
           category: restOfBook.category.reduce((acc: string[], curr) => {
-            acc.push(curr.name)
+            acc.push(curr._id)
             return acc
           }, []),
         }
@@ -56,8 +64,6 @@ const BookMutationFormDialog = ({
         }
   )
 
-  console.log(bookInfo.category)
-
   const handleClickOpen = () => {
     setOpen(true)
   }
@@ -67,16 +73,23 @@ const BookMutationFormDialog = ({
   }
 
   const handleSubmit = () => {
-    if (action === 'Create') {
-      onSubmit(bookInfo)
-        .unwrap()
-        .then(() => toast.success('New book created successfully!'))
-        .catch(() => toast.error('New book created unsuccessfully!'))
-    } else {
-      onSubmit({ _id, ...bookInfo })
-        .unwrap()
-        .then(() => toast.success('Book updated successfully!'))
-        .catch(() => toast.error('Book updated unsuccessfully!'))
+    if (authorizedToken) {
+      if (action === 'Create') {
+        onSubmit({ newBook: bookInfo, token: authorizedToken.accessToken })
+          .unwrap()
+          .then(() => toast.success('New book created successfully!'))
+          .catch(() => toast.error('New book created unsuccessfully!'))
+      } else {
+        onSubmit({
+          _id,
+          ...bookInfo,
+          category: bookInfo.category.toString(),
+          token: authorizedToken.accessToken,
+        })
+          .unwrap()
+          .then(() => toast.success('Book updated successfully!'))
+          .catch(() => toast.error('Book updated unsuccessfully!'))
+      }
     }
     setOpen(false)
   }
@@ -120,6 +133,24 @@ const BookMutationFormDialog = ({
             value={bookInfo.ISBN}
             onChange={(e) => setBookInfo({ ...bookInfo, ISBN: e.target.value })}
           />
+          <AuthorMenu
+            isMultiple={true}
+            containsNone={false}
+            value={author}
+            onChange={(e: SelectChangeEvent<string | string[]>) => {
+              setAuthor(e.target.value as string[])
+              setBookInfo({
+                ...bookInfo,
+                author: (e.target.value as string[]).reduce(
+                  (acc: string[], curr) => {
+                    acc.push(curr.split('  ')[0])
+                    return acc
+                  },
+                  []
+                ),
+              })
+            }}
+          />
           <TextField
             id="book-edition"
             label="Edition"
@@ -129,6 +160,17 @@ const BookMutationFormDialog = ({
             value={bookInfo.edition}
             onChange={(e) =>
               setBookInfo({ ...bookInfo, edition: e.target.value })
+            }
+          />
+          <TextField
+            id="book-publisher"
+            label="Publisher"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={bookInfo.publisher}
+            onChange={(e) =>
+              setBookInfo({ ...bookInfo, publisher: e.target.value })
             }
           />
           <TextField
@@ -143,20 +185,13 @@ const BookMutationFormDialog = ({
             }
           />
           <CategoryMenu
-            isMultiple={true}
             containsNone={false}
             value={category}
-            onChange={(e: SelectChangeEvent<string | string[]>) => {
-              setCategory(e.target.value as string[])
+            onChange={(e: SelectChangeEvent) => {
+              setCategory(e.target.value)
               setBookInfo({
                 ...bookInfo,
-                category: (e.target.value as string[]).reduce(
-                  (acc: string[], curr) => {
-                    acc.push(curr.split(' ')[0])
-                    return acc
-                  },
-                  []
-                ),
+                category: [e.target.value.split(' ')[0]],
               })
             }}
           />

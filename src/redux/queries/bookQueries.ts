@@ -23,7 +23,7 @@ const bookQueries = createApi({
             : ''
         }${
           filterOptions.authorName
-            ? '&authorName=' + filterOptions.authorName
+            ? '&authorName=' + filterOptions.authorName.split('  ')[1]
             : ''
         }${
           filterOptions.sortOrder
@@ -37,9 +37,9 @@ const bookQueries = createApi({
                 type: 'Book' as const,
                 _id,
               })),
-              { type: 'Book', _id: 'LIST' },
+              { type: 'Book', id: 'LIST' },
             ]
-          : [{ type: 'Book', _id: 'LIST' }],
+          : [{ type: 'Book', id: 'LIST' }],
     }),
     fetchSingleBook: builder.query<Book, string>({
       query: (bookId) => `${bookId}`,
@@ -61,7 +61,7 @@ const bookQueries = createApi({
       query: ({ newBook, token }) => ({
         url: '',
         method: 'POST',
-        body: newBook,
+        body: { ...newBook, category: newBook.category.toString() },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -70,12 +70,12 @@ const bookQueries = createApi({
     }),
     updateBook: builder.mutation<
       Book,
-      Pick<Book, '_id'> & BookMutationOptions & { token: string }
+      Pick<Book, '_id'> & BookMutationOptions & { __v: Number; token: string }
     >({
-      query: ({ _id, token, ...newValues }) => ({
+      query: ({ _id, token, __v, ...newValues }) => ({
         url: `${_id}`,
         method: 'PUT',
-        body: newValues,
+        body: { ...newValues, category: newValues.category.toString() },
         headers: {
           Authorization: `Bearer ${token}`,
         },
