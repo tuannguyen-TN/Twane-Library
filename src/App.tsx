@@ -75,6 +75,7 @@ const App = () => {
                 <Route path="/books">
                   <Route path=":id" element={<SingleBookPage />} />
                 </Route>
+                <Route path="/borrows" element={null} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />

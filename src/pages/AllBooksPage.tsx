@@ -10,7 +10,10 @@ import {
   Typography,
 } from '@mui/material'
 
-import { useFetchAllBooksQuery } from '../redux/queries/bookQueries'
+import {
+  useCreateBookMutation,
+  useFetchAllBooksQuery,
+} from '../redux/queries/bookQueries'
 import { Category } from '../types/Category'
 import { BASE_URL } from '../common/common'
 import { CategoriesContext } from '../contexts/CategoriesContext'
@@ -19,8 +22,14 @@ import CategoryMenu from '../components/CategoryMenu'
 import SortingOptionsMenu from '../components/SortingOptionsMenu'
 import ItemPerPageMenu from '../components/ItemPerPageMenu'
 import { FilterBooksOptions } from '../types/FilterBooksOptions'
+import BookMutationFormDialog from '../components/BookMutationFormDialog'
+import { Book } from '../types/Book'
+import { StateType } from '../redux/store/store'
+import { useAppSelector } from '../hooks/useAppSelector'
 
 const AllBooksPage = () => {
+  const { user } = useAppSelector((state: StateType) => state.userReducer)
+
   const [allCategories, setAllCategories] = useState<Category[]>([])
   const [loadingCategories, setLoadingCategories] = useState<boolean>(true)
   const [filterOptions, setFilterOptions] = useState<FilterBooksOptions>({
@@ -33,6 +42,7 @@ const AllBooksPage = () => {
   })
 
   const { data, isLoading, error } = useFetchAllBooksQuery(filterOptions)
+  const [createBook, { isLoading: isCreating }] = useCreateBookMutation()
 
   const fetchAllCategories = async () => {
     const res = await axios.get<Category[]>(`${BASE_URL}/categories`)
@@ -73,11 +83,13 @@ const AllBooksPage = () => {
                   }
                 />
                 <CategoryMenu
+                  isMultiple={false}
+                  containsNone={true}
                   value={filterOptions.categoryName}
-                  onChange={(e: SelectChangeEvent) =>
+                  onChange={(e: SelectChangeEvent<string | string[]>) =>
                     setFilterOptions({
                       ...filterOptions,
-                      categoryName: e.target.value,
+                      categoryName: e.target.value as string,
                     })
                   }
                 />
@@ -105,12 +117,14 @@ const AllBooksPage = () => {
                   }
                 />
               </Stack>
-              {/* <ProductMutationFormDialog
-                product={{} as unknown as Product}
-                disabled={user === null || user.role !== 'admin' || isCreating}
+              <BookMutationFormDialog
+                book={{} as unknown as Book}
+                disabled={
+                  user === null || user.role[0].title !== 'Admin' || isCreating
+                }
                 action="Create"
-                onSubmit={createProduct}
-              /> */}
+                onSubmit={createBook}
+              />
             </Stack>
             {isLoading && (
               <Skeleton variant="rectangular" width="100%" height={400} />

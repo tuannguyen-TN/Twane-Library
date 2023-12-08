@@ -12,11 +12,13 @@ import { Category } from '../types/Category'
 import { useCategoriesContext } from '../hooks/useCategoriesContext'
 
 interface Props {
-  value: string
-  onChange: (e: SelectChangeEvent) => void
+  isMultiple: boolean
+  containsNone: boolean
+  value: string | string[]
+  onChange: (e: SelectChangeEvent<string | string[]>) => void
 }
 
-const CategoryMenu = ({ value, onChange }: Props) => {
+const CategoryMenu = ({ isMultiple, containsNone, value, onChange }: Props) => {
   const categories = useCategoriesContext()
 
   return (
@@ -25,18 +27,25 @@ const CategoryMenu = ({ value, onChange }: Props) => {
       <Select
         labelId="category-select-label"
         id="category-select"
-        value={value}
+        multiple={isMultiple}
+        value={isMultiple ? (value as string[]) : (value as string)}
         onChange={onChange}
         label="Category"
       >
-        <MenuItem value="">
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Typography>None</Typography>
-          </Stack>
-        </MenuItem>
+        {containsNone && (
+          <MenuItem value="">
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography>None</Typography>
+            </Stack>
+          </MenuItem>
+        )}
         {categories
           ? categories.map((category: Category) => (
-              <MenuItem key={category._id} value={category.name}>
+              <MenuItem
+                key={category._id}
+                value={category._id + ' ' + category.name}
+                // value={category.name}
+              >
                 <Stack direction="row" spacing={1} alignItems="center">
                   <Typography>{category.name}</Typography>
                 </Stack>

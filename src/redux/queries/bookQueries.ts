@@ -19,7 +19,7 @@ const bookQueries = createApi({
           filterOptions.page
         }&search=${filterOptions.search}${
           filterOptions.categoryName
-            ? '&categoryName=' + filterOptions.categoryName
+            ? '&categoryName=' + filterOptions.categoryName.split(' ')[1]
             : ''
         }${
           filterOptions.authorName

@@ -41,36 +41,31 @@ const Navbar = () => {
               All books
             </Typography>
           </Link>
+          {isLoggedIn && (
+            <Link to="/borrows" style={{ textDecoration: 'none' }}>
+              <Typography variant="h6" color="inherit" noWrap>
+                My borrows
+              </Typography>
+            </Link>
+          )}
         </Stack>
         <Stack direction="row" spacing={5}>
           <MaterialUISwitch
             checked={isDarkTheme}
             onChange={handleSwitchChange}
           />
-          <Link to="/cart" style={{ textDecoration: 'none' }}>
-            {/* <Badge badgeContent={totalCartItems} color="warning">
+          {isLoggedIn ? (
+            <Stack direction="row" spacing={5}>
+              <Link to="/cart" style={{ textDecoration: 'none' }}>
+                {/* <Badge badgeContent={totalCartItems} color="warning">
               <Typography variant="h6" color="inherit" noWrap>
                 🛒
               </Typography>
             </Badge> */}
-            <Typography variant="h6" color="inherit" noWrap>
-              🛒
-            </Typography>
-          </Link>
-          {/* <Stack direction="row" spacing={5}>
-            <Link to="/register" style={{ textDecoration: 'none' }}>
-              <Typography variant="h6" color="inherit" noWrap>
-                Sign up
-              </Typography>
-            </Link>
-            <Link to="/login" style={{ textDecoration: 'none' }}>
-              <Typography variant="h6" color="inherit" noWrap>
-                Login
-              </Typography>
-            </Link>
-          </Stack> */}
-          {isLoggedIn ? (
-            <Stack direction="row" spacing={5}>
+                <Typography variant="h6" color="inherit" noWrap>
+                  🛒
+                </Typography>
+              </Link>
               <Link to="/profile" style={{ textDecoration: 'none' }}>
                 <Avatar src={user?.avatar} />
               </Link>

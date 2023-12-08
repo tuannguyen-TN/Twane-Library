@@ -36,18 +36,12 @@ const updateLocalStorage = () => {
 
   // localStorage.setItem('cart', JSON.stringify(cart))
   // localStorage.setItem('featuredProducts', JSON.stringify(featuredProducts))
-  // localStorage.setItem(
-  //   'user',
-  //   JSON.stringify({
-  //     ...userCredentials,
-  //     user: {
-  //       email: userCredentials.user?.email,
-  //       name: userCredentials.user?.name,
-  //       role: userCredentials.user?.role,
-  //       avatar: userCredentials.user?.avatar,
-  //     },
-  //   })
-  // )
+  localStorage.setItem(
+    'user',
+    JSON.stringify({
+      ...userCredentials,
+    })
+  )
 }
 
 store.subscribe(updateLocalStorage)

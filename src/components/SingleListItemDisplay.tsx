@@ -20,7 +20,11 @@ import { useAppDispatch } from '../hooks/useAppDispatch'
 import { useAppSelector } from '../hooks/useAppSelector'
 import { StateType } from '../redux/store/store'
 import { Book } from '../types/Book'
-import { useDeleteBookMutation } from '../redux/queries/bookQueries'
+import {
+  useDeleteBookMutation,
+  useUpdateBookMutation,
+} from '../redux/queries/bookQueries'
+import BookMutationFormDialog from './BookMutationFormDialog'
 
 interface Props {
   item: Book
@@ -32,11 +36,9 @@ const SingleListItemDisplay = ({ item }: Props) => {
   const { user, authorizedToken } = useAppSelector(
     (state: StateType) => state.userReducer
   )
-  console.log()
 
-  //   const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation()
   const [deleteBook, { isLoading: isDeleting }] = useDeleteBookMutation()
-  const isUpdating = false
+  const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation()
 
   return (
     <Grid item xs={12} sm={6} md={4}>
@@ -73,14 +75,17 @@ const SingleListItemDisplay = ({ item }: Props) => {
           >
             <AddShoppingCartIcon />
           </Button> */}
-          {/* <ProductMutationFormDialog
-            product={item}
+          <BookMutationFormDialog
+            book={item}
             disabled={
-              user === null || user.role !== 'admin' || isUpdating || isDeleting
+              user === null ||
+              user.role[0].title !== 'Admin' ||
+              isUpdating ||
+              isDeleting
             }
             action="Update"
-            onSubmit={updateProduct}
-          /> */}
+            onSubmit={updateBook}
+          />
           <Button
             size="small"
             disabled={

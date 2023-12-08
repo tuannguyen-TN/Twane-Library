@@ -19,7 +19,7 @@ const ProfilePage = () => {
     if (!isLoggedIn) {
       alert('You are not authorized!')
       navigate('/')
-    } else if (authorizedToken) {
+    } else if (!user && authorizedToken) {
       dispatch(fetchSingleUserInfo(authorizedToken.accessToken))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
