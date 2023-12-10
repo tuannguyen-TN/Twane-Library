@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate, useParams } from 'react-router'
+import { useParams } from 'react-router'
 import {
   Button,
   Card,
@@ -10,7 +10,6 @@ import {
   Typography,
 } from '@mui/material'
 import { Link } from 'react-router-dom'
-import DeleteIcon from '@mui/icons-material/Delete'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarIcon from '@mui/icons-material/Star'
 import { toast } from 'react-toastify'
@@ -18,11 +17,7 @@ import { toast } from 'react-toastify'
 import { useAppDispatch } from '../hooks/useAppDispatch'
 import { useAppSelector } from '../hooks/useAppSelector'
 import { StateType } from '../redux/store/store'
-import {
-  useDeleteBookMutation,
-  useFetchSingleBookQuery,
-  useUpdateBookMutation,
-} from '../redux/queries/bookQueries'
+import { useFetchSingleBookQuery } from '../redux/queries/bookQueries'
 import { Author } from '../types/Author'
 import { Category } from '../types/Category'
 import {
@@ -30,23 +25,16 @@ import {
   removeFeaturedBook,
 } from '../redux/reducers/featuredBooksReducer'
 import { Book } from '../types/Book'
-import BookMutationFormDialog from '../components/BookMutationFormDialog'
 
 const SingleBookPage = () => {
   const params = useParams()
   const bookId = params.id
   const { data, isLoading, isError } = useFetchSingleBookQuery(bookId as string)
-  const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const { user, authorizedToken } = useAppSelector(
-    (state: StateType) => state.userReducer
-  )
+  const { user } = useAppSelector((state: StateType) => state.userReducer)
   const featuredBooks = useAppSelector(
     (state: StateType) => state.featuredBooksReducer
   )
-
-  const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation()
-  const [deleteBook, { isLoading: isDeleting }] = useDeleteBookMutation()
 
   return (
     <div>
@@ -88,12 +76,7 @@ const SingleBookPage = () => {
                 user && user.role[0].title === 'Admin' ? (
                   <Button
                     size="small"
-                    disabled={
-                      user === null ||
-                      user.role[0].title !== 'Admin' ||
-                      isUpdating ||
-                      isDeleting
-                    }
+                    disabled={user === null || user.role[0].title !== 'Admin'}
                     onClick={() => dispatch(removeFeaturedBook(data._id))}
                   >
                     <StarIcon />
@@ -111,12 +94,7 @@ const SingleBookPage = () => {
               ) : (
                 <Button
                   size="small"
-                  disabled={
-                    user === null ||
-                    user.role[0].title !== 'Admin' ||
-                    isUpdating ||
-                    isDeleting
-                  }
+                  disabled={user === null || user.role[0].title !== 'Admin'}
                   onClick={() => dispatch(addFeaturedBook(data as Book))}
                 >
                   <StarBorderIcon />
