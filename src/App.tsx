@@ -15,6 +15,7 @@ import LoginPage from './pages/LoginPage'
 import ProfilePage from './pages/ProfilePage'
 import AllBooksPage from './pages/AllBooksPage'
 import SingleBookPage from './pages/SingleBookPage'
+import FeaturedBooks from './components/FeaturedBooks'
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true)
@@ -70,7 +71,7 @@ const App = () => {
           <main style={{ minHeight: 'calc(100vh - 290px)' }}>
             <Container sx={{ py: 5 }} maxWidth="lg">
               <Routes>
-                <Route path="/" element={null} />
+                <Route path="/" element={<FeaturedBooks />} />
                 <Route path="/books" element={<AllBooksPage />} />
                 <Route path="/books">
                   <Route path=":id" element={<SingleBookPage />} />

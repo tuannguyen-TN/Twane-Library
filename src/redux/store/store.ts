@@ -4,9 +4,14 @@ import { setupListeners } from '@reduxjs/toolkit/dist/query'
 import userReducer, { initialUserState } from '../reducers/userReducer'
 import { UserReducerState } from '../../types/UserReducerState'
 import bookQueries from '../queries/bookQueries'
+import featuredBooksReducer from '../reducers/featuredBooksReducer'
 
 const preLoadedUserReducer: UserReducerState = JSON.parse(
   localStorage.getItem('user') || JSON.stringify(initialUserState)
+)
+
+const preLoadedFeaturedBooksReducer = JSON.parse(
+  (localStorage.getItem('featuredBooks') as string) || JSON.stringify([])
 )
 
 export const createStore = () =>
@@ -14,13 +19,11 @@ export const createStore = () =>
     reducer: {
       userReducer,
       [bookQueries.reducerPath]: bookQueries.reducer,
+      featuredBooksReducer,
     },
     preloadedState: {
       // cartReducer: preLoadedCartReducer,
-      // productsReducer: {
-      //   ...initialProductsState,
-      //   featuredProducts: preLoadedFeaturedProducts,
-      // },
+      featuredBooksReducer: preLoadedFeaturedBooksReducer,
       userReducer: preLoadedUserReducer,
     },
     middleware: (getDefaultMiddleware) =>
@@ -31,11 +34,11 @@ const store = createStore()
 
 const updateLocalStorage = () => {
   // const cart = store.getState().cartReducer
-  // const featuredProducts = store.getState().productsReducer.featuredProducts
+  const featuredBooks = store.getState().featuredBooksReducer
   const userCredentials = store.getState().userReducer
 
   // localStorage.setItem('cart', JSON.stringify(cart))
-  // localStorage.setItem('featuredProducts', JSON.stringify(featuredProducts))
+  localStorage.setItem('featuredBooks', JSON.stringify(featuredBooks))
   localStorage.setItem(
     'user',
     JSON.stringify({

@@ -44,7 +44,7 @@ const BookMutationFormDialog = ({
       ? {
           ...restOfBook,
           author: restOfBook.author.reduce((acc: string[], curr) => {
-            acc.push(curr._id)
+            acc.push(curr._id as string)
             return acc
           }, []),
           category: restOfBook.category.reduce((acc: string[], curr) => {

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import DeleteIcon from '@mui/icons-material/Delete'
 import SearchIcon from '@mui/icons-material/Search'
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarIcon from '@mui/icons-material/Star'
 import {
@@ -12,9 +12,9 @@ import {
   CardMedia,
   Grid,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material'
+import { toast } from 'react-toastify'
 
 import { useAppDispatch } from '../hooks/useAppDispatch'
 import { useAppSelector } from '../hooks/useAppSelector'
@@ -25,6 +25,10 @@ import {
   useUpdateBookMutation,
 } from '../redux/queries/bookQueries'
 import BookMutationFormDialog from './BookMutationFormDialog'
+import {
+  addFeaturedBook,
+  removeFeaturedBook,
+} from '../redux/reducers/featuredBooksReducer'
 
 interface Props {
   item: Book
@@ -35,6 +39,9 @@ const SingleListItemDisplay = ({ item }: Props) => {
   const dispatch = useAppDispatch()
   const { user, authorizedToken } = useAppSelector(
     (state: StateType) => state.userReducer
+  )
+  const featuredBooks = useAppSelector(
+    (state: StateType) => state.featuredBooksReducer
   )
 
   const [deleteBook, { isLoading: isDeleting }] = useDeleteBookMutation()
@@ -73,7 +80,7 @@ const SingleListItemDisplay = ({ item }: Props) => {
             disabled={isUpdating || isDeleting}
             onClick={() => dispatch(addToCart(item))}
           >
-            <AddShoppingCartIcon />
+            <LibraryAddIcon />
           </Button> */}
           <BookMutationFormDialog
             book={item}
@@ -103,19 +110,18 @@ const SingleListItemDisplay = ({ item }: Props) => {
           >
             <DeleteIcon />
           </Button>
-          {/* {featuredProducts.findIndex(
-            (product: Product) => item.id === product.id
-          ) > -1 ? (
-            user && user.role === 'admin' ? (
+          {featuredBooks.findIndex((book: Book) => item._id === book._id) >
+          -1 ? (
+            user && user.role[0].title === 'Admin' ? (
               <Button
                 size="small"
                 disabled={
                   user === null ||
-                  user.role !== 'admin' ||
+                  user.role[0].title !== 'Admin' ||
                   isUpdating ||
                   isDeleting
                 }
-                onClick={() => dispatch(removeFeaturedProduct(item.id))}
+                onClick={() => dispatch(removeFeaturedBook(item._id))}
               >
                 <StarIcon />
               </Button>
@@ -134,15 +140,15 @@ const SingleListItemDisplay = ({ item }: Props) => {
               size="small"
               disabled={
                 user === null ||
-                user.role !== 'admin' ||
+                user.role[0].title !== 'Admin' ||
                 isUpdating ||
                 isDeleting
               }
-              onClick={() => dispatch(addFeaturedProduct(item as Product))}
+              onClick={() => dispatch(addFeaturedBook(item as Book))}
             >
               <StarBorderIcon />
             </Button>
-          )} */}
+          )}
         </CardActions>
       </Card>
     </Grid>
