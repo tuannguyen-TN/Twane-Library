@@ -11,6 +11,9 @@ import {
 } from '@mui/material'
 import { Link } from 'react-router-dom'
 import DeleteIcon from '@mui/icons-material/Delete'
+import StarBorderIcon from '@mui/icons-material/StarBorder'
+import StarIcon from '@mui/icons-material/Star'
+import { toast } from 'react-toastify'
 
 import { useAppDispatch } from '../hooks/useAppDispatch'
 import { useAppSelector } from '../hooks/useAppSelector'
@@ -18,9 +21,16 @@ import { StateType } from '../redux/store/store'
 import {
   useDeleteBookMutation,
   useFetchSingleBookQuery,
+  useUpdateBookMutation,
 } from '../redux/queries/bookQueries'
 import { Author } from '../types/Author'
 import { Category } from '../types/Category'
+import {
+  addFeaturedBook,
+  removeFeaturedBook,
+} from '../redux/reducers/featuredBooksReducer'
+import { Book } from '../types/Book'
+import BookMutationFormDialog from '../components/BookMutationFormDialog'
 
 const SingleBookPage = () => {
   const params = useParams()
@@ -31,10 +41,12 @@ const SingleBookPage = () => {
   const { user, authorizedToken } = useAppSelector(
     (state: StateType) => state.userReducer
   )
+  const featuredBooks = useAppSelector(
+    (state: StateType) => state.featuredBooksReducer
+  )
 
-  //   const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation()
+  const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation()
   const [deleteBook, { isLoading: isDeleting }] = useDeleteBookMutation()
-  const isUpdating = false
 
   return (
     <div>
@@ -47,7 +59,7 @@ const SingleBookPage = () => {
       )}
       {data && (
         <Stack
-          key={data._id}
+          key={data._id + Math.random().toString()}
           direction="row"
           alignItems="flex-start"
           spacing={5}
@@ -71,41 +83,54 @@ const SingleBookPage = () => {
               >
                 <AddShoppingCartIcon />
               </Button> */}
-              {/* <ProductMutationFormDialog
-                product={data}
-                disabled={
-                  user === null ||
-                  user.role !== 'admin' ||
-                  isUpdating ||
-                  isDeleting
-                }
-                action="Update"
-                onSubmit={updateProduct}
-              /> */}
-              <Button
-                size="small"
-                disabled={
-                  user === null ||
-                  user.role[0].title !== 'admin' ||
-                  isUpdating ||
-                  isDeleting
-                }
-                onClick={() =>
-                  deleteBook({
-                    bookId: data._id,
-                    token: authorizedToken?.accessToken as string,
-                  }).then(() => navigate('/books'))
-                }
-              >
-                <DeleteIcon />
-              </Button>
+              {featuredBooks.findIndex((book: Book) => data._id === book._id) >
+              -1 ? (
+                user && user.role[0].title === 'Admin' ? (
+                  <Button
+                    size="small"
+                    disabled={
+                      user === null ||
+                      user.role[0].title !== 'Admin' ||
+                      isUpdating ||
+                      isDeleting
+                    }
+                    onClick={() => dispatch(removeFeaturedBook(data._id))}
+                  >
+                    <StarIcon />
+                  </Button>
+                ) : (
+                  <Button
+                    size="small"
+                    onClick={() =>
+                      toast.error('Only admins can perform this action!')
+                    }
+                  >
+                    <StarIcon />
+                  </Button>
+                )
+              ) : (
+                <Button
+                  size="small"
+                  disabled={
+                    user === null ||
+                    user.role[0].title !== 'Admin' ||
+                    isUpdating ||
+                    isDeleting
+                  }
+                  onClick={() => dispatch(addFeaturedBook(data as Book))}
+                >
+                  <StarBorderIcon />
+                </Button>
+              )}
             </CardActions>
           </Card>
           <Stack direction="column" spacing={5} alignItems="flex-start">
             <Typography variant="h3">{data.title}</Typography>
             <Stack direction="column" justifyContent="space-between">
               {data.author.map((author: Author) => (
-                <Typography key={author._id}>- {author.fullName}</Typography>
+                <Typography key={author._id + Math.random().toString()}>
+                  - {author.fullName}
+                </Typography>
               ))}
             </Stack>
             <Stack
@@ -152,9 +177,13 @@ const SingleBookPage = () => {
             >
               <Typography variant="h6">Category</Typography>
               <Stack direction="column" justifyContent="space-between">
-                {data.category.map((category: Category) => (
-                  <Typography key={category._id}>{category.name}</Typography>
-                ))}
+                {data.category && data.category[0].name
+                  ? data.category.map((category: Category) => (
+                      <Typography key={category._id + Math.random().toString()}>
+                        {category.name}
+                      </Typography>
+                    ))
+                  : null}
               </Stack>
             </Stack>
           </Stack>

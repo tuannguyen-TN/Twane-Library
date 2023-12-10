@@ -1,7 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ToastContainer } from 'react-toastify'
-import { Box, Container, CssBaseline, Typography } from '@mui/material'
+import {
+  Box,
+  Container,
+  CssBaseline,
+  Skeleton,
+  Typography,
+} from '@mui/material'
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
+import axios from 'axios'
 
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -16,9 +23,34 @@ import ProfilePage from './pages/ProfilePage'
 import AllBooksPage from './pages/AllBooksPage'
 import SingleBookPage from './pages/SingleBookPage'
 import FeaturedBooks from './components/FeaturedBooks'
+import { Author } from './types/Author'
+import { Category } from './types/Category'
+import { BASE_URL } from './common/common'
+import { AuthorsCategoriesContext } from './contexts/AuthorsCategoriesContext'
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true)
+  const [allAuthors, setAllAuthors] = useState<Author[]>([])
+  const [loadingAuthors, setLoadingAuthors] = useState<boolean>(true)
+  const [allCategories, setAllCategories] = useState<Category[]>([])
+  const [loadingCategories, setLoadingCategories] = useState<boolean>(true)
+
+  const fetchAllCategories = async () => {
+    const res = await axios.get<Category[]>(`${BASE_URL}/categories`)
+    setAllCategories(res.data)
+  }
+
+  const fetchAllAuthors = async () => {
+    const res = await axios.get<Author[]>(`${BASE_URL}/authors`)
+    setAllAuthors(res.data)
+  }
+
+  useEffect(() => {
+    fetchAllCategories()
+    setLoadingCategories(false)
+    fetchAllAuthors()
+    setLoadingAuthors(false)
+  }, [])
 
   return (
     <BrowserRouter>
@@ -69,21 +101,29 @@ const App = () => {
           </Box>
 
           <main style={{ minHeight: 'calc(100vh - 290px)' }}>
-            <Container sx={{ py: 5 }} maxWidth="lg">
-              <Routes>
-                <Route path="/" element={<FeaturedBooks />} />
-                <Route path="/books" element={<AllBooksPage />} />
-                <Route path="/books">
-                  <Route path=":id" element={<SingleBookPage />} />
-                </Route>
-                <Route path="/borrows" element={null} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/cart" element={null} />
-                <Route path="*" element={<ErrorPage />} />
-              </Routes>
-            </Container>
+            {loadingCategories || loadingAuthors ? (
+              <Skeleton variant="rectangular" width="100%" height={400} />
+            ) : (
+              <AuthorsCategoriesContext.Provider
+                value={{ authors: allAuthors, categories: allCategories }}
+              >
+                <Container sx={{ py: 5 }} maxWidth="lg">
+                  <Routes>
+                    <Route path="/" element={<FeaturedBooks />} />
+                    <Route path="/books" element={<AllBooksPage />} />
+                    <Route path="/books">
+                      <Route path=":id" element={<SingleBookPage />} />
+                    </Route>
+                    <Route path="/borrows" element={null} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/cart" element={null} />
+                    <Route path="*" element={<ErrorPage />} />
+                  </Routes>
+                </Container>
+              </AuthorsCategoriesContext.Provider>
+            )}
           </main>
 
           <footer style={{ backgroundColor: 'gray' }}>
