@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ToastContainer } from 'react-toastify'
 import {
   Box,
@@ -8,7 +8,6 @@ import {
   Typography,
 } from '@mui/material'
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
-import axios from 'axios'
 
 import 'react-toastify/dist/ReactToastify.css'
 
@@ -23,32 +22,26 @@ import ProfilePage from './pages/ProfilePage'
 import AllBooksPage from './pages/AllBooksPage'
 import SingleBookPage from './pages/SingleBookPage'
 import FeaturedBooks from './components/FeaturedBooks'
-import { Author } from './types/Author'
 import { Category } from './types/Category'
-import { BASE_URL } from './common/common'
+import { Author } from './types/Author'
 import { AuthorsCategoriesContext } from './contexts/AuthorsCategoriesContext'
 import { useFetchAllCategoriesQuery } from './redux/queries/categoryQueries'
+import { useFetchAllAuthorsQuery } from './redux/queries/authorQueries'
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true)
-  const [allAuthors, setAllAuthors] = useState<Author[]>([])
-  const [loadingAuthors, setLoadingAuthors] = useState<boolean>(true)
 
-  const fetchAllAuthors = async () => {
-    const res = await axios.get<Author[]>(`${BASE_URL}/authors`)
-    setAllAuthors(res.data)
-  }
+  const {
+    data: allAuthors,
+    isLoading: authorsLoading,
+    error: authorsError,
+  } = useFetchAllAuthorsQuery()
 
   const {
     data: allCategories,
     isLoading: categoriesLoading,
     error: categoriesError,
   } = useFetchAllCategoriesQuery()
-
-  useEffect(() => {
-    fetchAllAuthors()
-    setLoadingAuthors(false)
-  }, [])
 
   return (
     <BrowserRouter>
@@ -99,18 +92,18 @@ const App = () => {
           </Box>
 
           <main style={{ minHeight: 'calc(100vh - 290px)' }}>
-            {categoriesError && (
+            {categoriesError && authorsError && (
               <Typography variant="h4">
                 Failed to load list of authors and categories.
               </Typography>
             )}
-            {(categoriesLoading || loadingAuthors) && (
+            {categoriesLoading && authorsLoading && (
               <Skeleton variant="rectangular" width="100%" height={400} />
             )}
             {allAuthors && allCategories && (
               <AuthorsCategoriesContext.Provider
                 value={{
-                  authors: allAuthors,
+                  authors: allAuthors as Author[],
                   categories: allCategories as Category[],
                 }}
               >
