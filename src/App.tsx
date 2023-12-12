@@ -92,7 +92,7 @@ const App = () => {
           </Box>
 
           <main style={{ minHeight: 'calc(100vh - 290px)' }}>
-            {categoriesError && authorsError && (
+            {(categoriesError || authorsError) && (
               <Typography variant="h4">
                 Failed to load list of authors and categories.
               </Typography>
