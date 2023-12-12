@@ -27,27 +27,25 @@ import { Author } from './types/Author'
 import { Category } from './types/Category'
 import { BASE_URL } from './common/common'
 import { AuthorsCategoriesContext } from './contexts/AuthorsCategoriesContext'
+import { useFetchAllCategoriesQuery } from './redux/queries/categoryQueries'
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true)
   const [allAuthors, setAllAuthors] = useState<Author[]>([])
   const [loadingAuthors, setLoadingAuthors] = useState<boolean>(true)
-  const [allCategories, setAllCategories] = useState<Category[]>([])
-  const [loadingCategories, setLoadingCategories] = useState<boolean>(true)
-
-  const fetchAllCategories = async () => {
-    const res = await axios.get<Category[]>(`${BASE_URL}/categories`)
-    setAllCategories(res.data)
-  }
 
   const fetchAllAuthors = async () => {
     const res = await axios.get<Author[]>(`${BASE_URL}/authors`)
     setAllAuthors(res.data)
   }
 
+  const {
+    data: allCategories,
+    isLoading: categoriesLoading,
+    error: categoriesError,
+  } = useFetchAllCategoriesQuery()
+
   useEffect(() => {
-    fetchAllCategories()
-    setLoadingCategories(false)
     fetchAllAuthors()
     setLoadingAuthors(false)
   }, [])
@@ -101,11 +99,20 @@ const App = () => {
           </Box>
 
           <main style={{ minHeight: 'calc(100vh - 290px)' }}>
-            {loadingCategories || loadingAuthors ? (
+            {categoriesError && (
+              <Typography variant="h4">
+                Failed to load list of authors and categories.
+              </Typography>
+            )}
+            {(categoriesLoading || loadingAuthors) && (
               <Skeleton variant="rectangular" width="100%" height={400} />
-            ) : (
+            )}
+            {allAuthors && allCategories && (
               <AuthorsCategoriesContext.Provider
-                value={{ authors: allAuthors, categories: allCategories }}
+                value={{
+                  authors: allAuthors,
+                  categories: allCategories as Category[],
+                }}
               >
                 <Container sx={{ py: 5 }} maxWidth="lg">
                   <Routes>

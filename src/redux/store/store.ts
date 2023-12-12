@@ -5,6 +5,7 @@ import userReducer, { initialUserState } from '../reducers/userReducer'
 import { UserReducerState } from '../../types/UserReducerState'
 import bookQueries from '../queries/bookQueries'
 import featuredBooksReducer from '../reducers/featuredBooksReducer'
+import categoryQueries from '../queries/categoryQueries'
 
 const preLoadedUserReducer: UserReducerState = JSON.parse(
   localStorage.getItem('user') || JSON.stringify(initialUserState)
@@ -19,6 +20,7 @@ export const createStore = () =>
     reducer: {
       userReducer,
       [bookQueries.reducerPath]: bookQueries.reducer,
+      [categoryQueries.reducerPath]: categoryQueries.reducer,
       featuredBooksReducer,
     },
     preloadedState: {
@@ -27,7 +29,10 @@ export const createStore = () =>
       userReducer: preLoadedUserReducer,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(bookQueries.middleware),
+      getDefaultMiddleware().concat(
+        bookQueries.middleware,
+        categoryQueries.middleware
+      ),
   })
 
 const store = createStore()
