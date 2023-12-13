@@ -11,7 +11,7 @@ const BookListDisplay = ({ books }: Props) => {
   return (
     <Grid container spacing={4}>
       {books.map((item: Book) => (
-        <SingleListItemDisplay item={item} key={item._id} />
+        <SingleListItemDisplay item={item} key={item._id} cartDisplay={false} />
       ))}
     </Grid>
   )

@@ -45,7 +45,7 @@ const cartQueries = createApi({
       { bookId: string; token: string }
     >({
       query: ({ bookId, token }) => ({
-        url: `${bookId}`,
+        url: `book/${bookId}`,
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

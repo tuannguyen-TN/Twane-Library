@@ -3,10 +3,8 @@ import { Box, Button, Grid, Skeleton, Stack, Typography } from '@mui/material'
 import { toast } from 'react-toastify'
 
 import {
-  useAddToCartMutation,
   useCheckoutMutation,
   useFetchCartQuery,
-  useRemoveFromCartMutation,
 } from '../redux/queries/cartQueries'
 import { Book } from '../types/Book'
 import SingleListItemDisplay from '../components/SingleListItemDisplay'
@@ -33,10 +31,6 @@ const CartPage = () => {
     isLoading,
     error,
   } = useFetchCartQuery({ token: authorizedToken?.accessToken as string })
-
-  const [addToCart, { isLoading: isAdding }] = useAddToCartMutation()
-  const [removeFromCart, { isLoading: isRemoving }] =
-    useRemoveFromCartMutation()
   const [checkout, { isLoading: isCheckingOut }] = useCheckoutMutation()
 
   const handleCheckout = () => {
@@ -51,7 +45,7 @@ const CartPage = () => {
       <Stack direction="row" justifyContent="space-between" spacing={4}>
         <Typography variant="h4">Your Book Basket</Typography>
         <Button
-          disabled={!cart || cart.books.length === 0}
+          disabled={!cart || cart.books.length === 0 || isCheckingOut}
           variant="contained"
           onClick={handleCheckout}
         >
@@ -76,8 +70,20 @@ const CartPage = () => {
           </Box>
         )}
         {cart &&
-          cart.books.map((item: Book) => (
-            <SingleListItemDisplay item={item} key={item._id} />
+          (cart.books.length > 0 ? (
+            cart.books.map((item: Book) => (
+              <SingleListItemDisplay
+                item={item}
+                key={item._id}
+                cartDisplay={true}
+              />
+            ))
+          ) : (
+            <Box>
+              <Typography variant="h4">
+                Your cart is empty. Add some books here.
+              </Typography>
+            </Box>
           ))}
       </Grid>
     </Box>

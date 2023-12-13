@@ -15,6 +15,7 @@ import {
   Typography,
 } from '@mui/material'
 import { toast } from 'react-toastify'
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 
 import { useAppDispatch } from '../hooks/useAppDispatch'
 import { useAppSelector } from '../hooks/useAppSelector'
@@ -29,12 +30,18 @@ import {
   addFeaturedBook,
   removeFeaturedBook,
 } from '../redux/reducers/featuredBooksReducer'
+import {
+  useAddToCartMutation,
+  useFetchCartQuery,
+  useRemoveFromCartMutation,
+} from '../redux/queries/cartQueries'
 
 interface Props {
   item: Book
+  cartDisplay: boolean
 }
 
-const SingleListItemDisplay = ({ item }: Props) => {
+const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { user, authorizedToken } = useAppSelector(
@@ -46,6 +53,21 @@ const SingleListItemDisplay = ({ item }: Props) => {
 
   const [deleteBook, { isLoading: isDeleting }] = useDeleteBookMutation()
   const [updateBook, { isLoading: isUpdating }] = useUpdateBookMutation()
+
+  const { data: cart, error } = useFetchCartQuery({
+    token: authorizedToken?.accessToken as string,
+  })
+  const [addToCart, { isLoading: isAdding }] = useAddToCartMutation()
+  const [removeFromCart, { isLoading: isRemoving }] =
+    useRemoveFromCartMutation()
+
+  // console.log(
+  //   // isUpdating ||
+  //   // isDeleting ||
+  //   // isAdding ||
+  //   // (error && (error as FetchBaseQueryError).status !== 404) ||
+  //   cart && cart.books.findIndex((book: Book) => book._id === item._id) < 0
+  // )
 
   return (
     <Grid item xs={12} sm={6} md={4}>
@@ -75,41 +97,75 @@ const SingleListItemDisplay = ({ item }: Props) => {
           <Button size="small" onClick={() => navigate(`/books/${item._id}`)}>
             <SearchIcon />
           </Button>
-          {/* <Button
-            size="small"
-            disabled={isUpdating || isDeleting}
-            onClick={() => dispatch(addToCart(item))}
-          >
-            <LibraryAddIcon />
-          </Button> */}
-          <BookMutationFormDialog
-            book={item}
-            disabled={
-              user === null ||
-              user.role[0].title !== 'Admin' ||
-              isUpdating ||
-              isDeleting
-            }
-            action="Update"
-            onSubmit={updateBook}
-          />
-          <Button
-            size="small"
-            disabled={
-              user === null ||
-              user.role[0].title !== 'Admin' ||
-              isUpdating ||
-              isDeleting
-            }
-            onClick={() =>
-              deleteBook({
-                bookId: item._id,
-                token: authorizedToken?.accessToken as string,
-              })
-            }
-          >
-            <DeleteIcon />
-          </Button>
+          {!cartDisplay ? (
+            <>
+              <Button
+                size="small"
+                disabled={
+                  isUpdating ||
+                  isDeleting ||
+                  isAdding ||
+                  (error && (error as FetchBaseQueryError).status !== 404) ||
+                  (cart &&
+                    cart.books.length > 0 &&
+                    cart.books.findIndex(
+                      (book: Book) => book._id === item._id
+                    ) > -1)
+                }
+                onClick={() =>
+                  addToCart({
+                    book_id: item._id,
+                    token: authorizedToken?.accessToken as string,
+                  })
+                }
+              >
+                <LibraryAddIcon />
+              </Button>
+              <BookMutationFormDialog
+                book={item}
+                disabled={
+                  user === null ||
+                  user.role[0].title !== 'Admin' ||
+                  isUpdating ||
+                  isDeleting ||
+                  isAdding
+                }
+                action="Update"
+                onSubmit={updateBook}
+              />
+              <Button
+                size="small"
+                disabled={
+                  user === null ||
+                  user.role[0].title !== 'Admin' ||
+                  isUpdating ||
+                  isDeleting ||
+                  isAdding
+                }
+                onClick={() =>
+                  deleteBook({
+                    bookId: item._id,
+                    token: authorizedToken?.accessToken as string,
+                  })
+                }
+              >
+                <DeleteIcon />
+              </Button>
+            </>
+          ) : (
+            <Button
+              size="small"
+              disabled={isRemoving}
+              onClick={() =>
+                removeFromCart({
+                  bookId: item._id,
+                  token: authorizedToken?.accessToken as string,
+                })
+              }
+            >
+              <DeleteIcon />
+            </Button>
+          )}
           {featuredBooks.findIndex((book: Book) => item._id === book._id) >
           -1 ? (
             user && user.role[0].title === 'Admin' ? (
@@ -119,7 +175,8 @@ const SingleListItemDisplay = ({ item }: Props) => {
                   user === null ||
                   user.role[0].title !== 'Admin' ||
                   isUpdating ||
-                  isDeleting
+                  isDeleting ||
+                  isAdding
                 }
                 onClick={() => dispatch(removeFeaturedBook(item._id))}
               >
@@ -142,7 +199,8 @@ const SingleListItemDisplay = ({ item }: Props) => {
                 user === null ||
                 user.role[0].title !== 'Admin' ||
                 isUpdating ||
-                isDeleting
+                isDeleting ||
+                isAdding
               }
               onClick={() => dispatch(addFeaturedBook(item as Book))}
             >
