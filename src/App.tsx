@@ -27,6 +27,7 @@ import { Author } from './types/Author'
 import { AuthorsCategoriesContext } from './contexts/AuthorsCategoriesContext'
 import { useFetchAllCategoriesQuery } from './redux/queries/categoryQueries'
 import { useFetchAllAuthorsQuery } from './redux/queries/authorQueries'
+import CartPage from './pages/CartPage'
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true)
@@ -118,7 +119,7 @@ const App = () => {
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
-                    <Route path="/cart" element={null} />
+                    <Route path="/cart" element={<CartPage />} />
                     <Route path="*" element={<ErrorPage />} />
                   </Routes>
                 </Container>
