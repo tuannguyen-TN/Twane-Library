@@ -1,6 +1,13 @@
 import React from 'react'
-import { AppBar, Avatar, Stack, Toolbar, Typography } from '@mui/material'
-import { Link } from 'react-router-dom'
+import {
+  AppBar,
+  Avatar,
+  Badge,
+  Stack,
+  Toolbar,
+  Typography,
+} from '@mui/material'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { useThemeContext } from '../hooks/useThemeContext'
 import MaterialUISwitch from './MaterialUISwitch'
@@ -8,13 +15,19 @@ import { userLogout } from '../redux/reducers/userReducer'
 import { useAppSelector } from '../hooks/useAppSelector'
 import { StateType } from '../redux/store/store'
 import { useAppDispatch } from '../hooks/useAppDispatch'
+import { useFetchCartQuery } from '../redux/queries/cartQueries'
 
 const Navbar = () => {
   const { isDarkTheme, setIsDarkTheme } = useThemeContext()
-  const { isLoggedIn, user } = useAppSelector(
+  const { isLoggedIn, user, authorizedToken } = useAppSelector(
     (state: StateType) => state.userReducer
   )
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+
+  const { data: cart } = useFetchCartQuery({
+    token: authorizedToken?.accessToken as string,
+  })
 
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (setIsDarkTheme) {
@@ -43,9 +56,11 @@ const Navbar = () => {
           </Link>
           {isLoggedIn && (
             <Link to="/borrows" style={{ textDecoration: 'none' }}>
-              <Typography variant="h6" color="inherit" noWrap>
-                My borrows
-              </Typography>
+              <Badge badgeContent={0} showZero color="warning">
+                <Typography variant="h6" color="inherit" noWrap>
+                  My borrows
+                </Typography>
+              </Badge>
             </Link>
           )}
         </Stack>
@@ -57,14 +72,15 @@ const Navbar = () => {
           {isLoggedIn ? (
             <Stack direction="row" spacing={5}>
               <Link to="/cart" style={{ textDecoration: 'none' }}>
-                {/* <Badge badgeContent={totalCartItems} color="warning">
-              <Typography variant="h6" color="inherit" noWrap>
-                🛒
-              </Typography>
-            </Badge> */}
-                <Typography variant="h6" color="inherit" noWrap>
-                  🛒
-                </Typography>
+                <Badge
+                  badgeContent={(cart && cart.books.length) || 0}
+                  showZero
+                  color="warning"
+                >
+                  <Typography variant="h4" color="inherit" noWrap>
+                    🧺
+                  </Typography>
+                </Badge>
               </Link>
               <Link to="/profile" style={{ textDecoration: 'none' }}>
                 <Avatar src={user?.avatar} />
@@ -72,7 +88,10 @@ const Navbar = () => {
               <Link
                 to="/"
                 style={{ textDecoration: 'none' }}
-                onClick={() => dispatch(userLogout())}
+                onClick={() => {
+                  dispatch(userLogout())
+                  navigate('/')
+                }}
               >
                 <Typography variant="h6" color="inherit" noWrap>
                   Log out
