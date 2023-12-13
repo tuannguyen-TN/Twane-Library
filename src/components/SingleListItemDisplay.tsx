@@ -61,14 +61,6 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
   const [removeFromCart, { isLoading: isRemoving }] =
     useRemoveFromCartMutation()
 
-  // console.log(
-  //   // isUpdating ||
-  //   // isDeleting ||
-  //   // isAdding ||
-  //   // (error && (error as FetchBaseQueryError).status !== 404) ||
-  //   cart && cart.books.findIndex((book: Book) => book._id === item._id) < 0
-  // )
-
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
