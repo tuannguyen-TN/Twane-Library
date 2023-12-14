@@ -8,6 +8,7 @@ import featuredBooksReducer from '../reducers/featuredBooksReducer'
 import categoryQueries from '../queries/categoryQueries'
 import authorQueries from '../queries/authorQueries'
 import cartQueries from '../queries/cartQueries'
+import borrowQueries from '../queries/borrowQueries'
 
 const preLoadedUserReducer: UserReducerState = JSON.parse(
   localStorage.getItem('user') || JSON.stringify(initialUserState)
@@ -23,6 +24,7 @@ export const createStore = () =>
       userReducer,
       [authorQueries.reducerPath]: authorQueries.reducer,
       [bookQueries.reducerPath]: bookQueries.reducer,
+      [borrowQueries.reducerPath]: borrowQueries.reducer,
       [categoryQueries.reducerPath]: categoryQueries.reducer,
       [cartQueries.reducerPath]: cartQueries.reducer,
       featuredBooksReducer,
@@ -36,6 +38,7 @@ export const createStore = () =>
       getDefaultMiddleware().concat(
         authorQueries.middleware,
         bookQueries.middleware,
+        borrowQueries.middleware,
         categoryQueries.middleware,
         cartQueries.middleware
       ),

@@ -28,6 +28,7 @@ import { AuthorsCategoriesContext } from './contexts/AuthorsCategoriesContext'
 import { useFetchAllCategoriesQuery } from './redux/queries/categoryQueries'
 import { useFetchAllAuthorsQuery } from './redux/queries/authorQueries'
 import CartPage from './pages/CartPage'
+import MyBorrowsPage from './pages/MyBorrowsPage'
 
 const App = () => {
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(true)
@@ -77,7 +78,7 @@ const App = () => {
                   color="text.primary"
                   gutterBottom
                 >
-                  OpenLibSys
+                  Tωane
                 </Typography>
               </Link>
               <Typography
@@ -94,13 +95,13 @@ const App = () => {
 
           <main style={{ minHeight: 'calc(100vh - 290px)' }}>
             <Container sx={{ py: 5 }} maxWidth="lg">
+              {categoriesLoading && authorsLoading && (
+                <Skeleton variant="rectangular" width="100%" height={400} />
+              )}
               {(categoriesError || authorsError) && (
                 <Typography variant="h4">
                   Failed to load list of authors and categories.
                 </Typography>
-              )}
-              {categoriesLoading && authorsLoading && (
-                <Skeleton variant="rectangular" width="100%" height={400} />
               )}
               {allAuthors && allCategories && (
                 <AuthorsCategoriesContext.Provider
@@ -115,7 +116,7 @@ const App = () => {
                     <Route path="/books">
                       <Route path=":id" element={<SingleBookPage />} />
                     </Route>
-                    <Route path="/borrows" element={null} />
+                    <Route path="/borrows" element={<MyBorrowsPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
