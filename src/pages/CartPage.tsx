@@ -24,6 +24,7 @@ const CartPage = () => {
       alert('You are not signed in to use this feature!')
       navigate('/')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const {
