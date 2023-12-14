@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { Box, Button, Grid, Skeleton, Stack, Typography } from '@mui/material'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router'
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 
 import {
   useCheckoutMutation,
@@ -10,8 +12,6 @@ import { Book } from '../types/Book'
 import SingleListItemDisplay from '../components/SingleListItemDisplay'
 import { useAppSelector } from '../hooks/useAppSelector'
 import { StateType } from '../redux/store/store'
-import { useNavigate } from 'react-router'
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 
 const CartPage = () => {
   const { authorizedToken } = useAppSelector(

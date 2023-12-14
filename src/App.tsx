@@ -93,22 +93,22 @@ const App = () => {
           </Box>
 
           <main style={{ minHeight: 'calc(100vh - 290px)' }}>
-            {(categoriesError || authorsError) && (
-              <Typography variant="h4">
-                Failed to load list of authors and categories.
-              </Typography>
-            )}
-            {categoriesLoading && authorsLoading && (
-              <Skeleton variant="rectangular" width="100%" height={400} />
-            )}
-            {allAuthors && allCategories && (
-              <AuthorsCategoriesContext.Provider
-                value={{
-                  authors: allAuthors as Author[],
-                  categories: allCategories as Category[],
-                }}
-              >
-                <Container sx={{ py: 5 }} maxWidth="lg">
+            <Container sx={{ py: 5 }} maxWidth="lg">
+              {(categoriesError || authorsError) && (
+                <Typography variant="h4">
+                  Failed to load list of authors and categories.
+                </Typography>
+              )}
+              {categoriesLoading && authorsLoading && (
+                <Skeleton variant="rectangular" width="100%" height={400} />
+              )}
+              {allAuthors && allCategories && (
+                <AuthorsCategoriesContext.Provider
+                  value={{
+                    authors: allAuthors as Author[],
+                    categories: allCategories as Category[],
+                  }}
+                >
                   <Routes>
                     <Route path="/" element={<FeaturedBooks />} />
                     <Route path="/books" element={<AllBooksPage />} />
@@ -122,9 +122,9 @@ const App = () => {
                     <Route path="/cart" element={<CartPage />} />
                     <Route path="*" element={<ErrorPage />} />
                   </Routes>
-                </Container>
-              </AuthorsCategoriesContext.Provider>
-            )}
+                </AuthorsCategoriesContext.Provider>
+              )}
+            </Container>
           </main>
 
           <footer style={{ backgroundColor: 'gray' }}>
