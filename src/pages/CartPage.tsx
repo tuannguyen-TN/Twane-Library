@@ -38,6 +38,7 @@ const CartPage = () => {
     checkout({ token: authorizedToken?.accessToken as string })
       .unwrap()
       .then(() => toast.success('Books borrowed successfully!'))
+      .then(() => navigate('/borrows'))
       .catch(() => toast.error('Books borrowed unsuccessfully!'))
   }
 

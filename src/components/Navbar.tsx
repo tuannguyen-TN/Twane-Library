@@ -16,6 +16,7 @@ import { useAppSelector } from '../hooks/useAppSelector'
 import { StateType } from '../redux/store/store'
 import { useAppDispatch } from '../hooks/useAppDispatch'
 import { useFetchCartQuery } from '../redux/queries/cartQueries'
+import { useFetchBorrowsQuery } from '../redux/queries/borrowQueries'
 
 const Navbar = () => {
   const { isDarkTheme, setIsDarkTheme } = useThemeContext()
@@ -26,6 +27,10 @@ const Navbar = () => {
   const navigate = useNavigate()
 
   const { data: cart } = useFetchCartQuery({
+    token: authorizedToken?.accessToken as string,
+  })
+
+  const { data: borrows } = useFetchBorrowsQuery({
     token: authorizedToken?.accessToken as string,
   })
 
@@ -56,7 +61,15 @@ const Navbar = () => {
           </Link>
           {isLoggedIn && (
             <Link to="/borrows" style={{ textDecoration: 'none' }}>
-              <Badge badgeContent={0} showZero color="warning">
+              <Badge
+                badgeContent={
+                  (borrows &&
+                    borrows.history.filter((item) => !item.returned).length) ||
+                  0
+                }
+                showZero
+                color="warning"
+              >
                 <Typography variant="h6" color="inherit" noWrap>
                   My borrows
                 </Typography>

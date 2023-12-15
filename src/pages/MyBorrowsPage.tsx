@@ -35,13 +35,15 @@ const MyBorrowsPage = () => {
           </Box>
         )}
         {borrows &&
-          (borrows.history.length > 0 ? (
-            borrows.history.map((item: BorrowItem) => (
-              <BorrowItemDisplay
-                item={item}
-                key={item.book._id + Math.random().toString()}
-              />
-            ))
+          (borrows.history.filter((item) => !item.returned).length > 0 ? (
+            borrows.history
+              .filter((item) => !item.returned)
+              .map((item: BorrowItem) => (
+                <BorrowItemDisplay
+                  item={item}
+                  key={item.book._id + Math.random().toString()}
+                />
+              ))
           ) : (
             <Box>
               <Typography variant="h4">
