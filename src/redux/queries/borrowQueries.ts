@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 import { BASE_URL } from '../../common/common'
-import { BorrowItem } from '../../types/BorrowItem'
 import { BorrowApiResponse } from '../../types/BorrowApiResponse'
 
 const borrowQueries = createApi({
@@ -30,10 +29,7 @@ const borrowQueries = createApi({
             ]
           : [{ type: 'BorrowItem', id: 'LIST' }],
     }),
-    returnBorrow: builder.mutation<
-      BorrowItem,
-      { bookId: string; token: string }
-    >({
+    returnBorrow: builder.mutation<void, { bookId: string; token: string }>({
       query: ({ bookId, token }) => ({
         url: 'return',
         method: 'POST',
