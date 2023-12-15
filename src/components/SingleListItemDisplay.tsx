@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom'
 import DeleteIcon from '@mui/icons-material/Delete'
 import SearchIcon from '@mui/icons-material/Search'
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd'
-import StarBorderIcon from '@mui/icons-material/StarBorder'
 import StarIcon from '@mui/icons-material/Star'
 import {
   Button,
@@ -26,15 +25,13 @@ import {
   useUpdateBookMutation,
 } from '../redux/queries/bookQueries'
 import BookMutationFormDialog from './BookMutationFormDialog'
-import {
-  addFeaturedBook,
-  removeFeaturedBook,
-} from '../redux/reducers/featuredBooksReducer'
+import { removeFeaturedBook } from '../redux/reducers/featuredBooksReducer'
 import {
   useAddToCartMutation,
   useFetchCartQuery,
   useRemoveFromCartMutation,
 } from '../redux/queries/cartQueries'
+import { useFetchBorrowsQuery } from '../redux/queries/borrowQueries'
 
 interface Props {
   item: Book
@@ -61,6 +58,10 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
   const [removeFromCart, { isLoading: isRemoving }] =
     useRemoveFromCartMutation()
 
+  const { data: borrows } = useFetchBorrowsQuery({
+    token: authorizedToken?.accessToken as string,
+  })
+
   return (
     <Grid item xs={12} sm={6} md={4}>
       <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -84,6 +85,11 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
             </Stack>
           </Stack>
           <Typography>{item.description}</Typography>
+          {!cartDisplay && (
+            <Typography>
+              Available copies: {item.availableCopies[0].total}
+            </Typography>
+          )}
         </CardContent>
         <CardActions>
           <Button size="small" onClick={() => navigate(`/books/${item._id}`)}>
@@ -97,12 +103,19 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
                   isUpdating ||
                   isDeleting ||
                   isAdding ||
+                  item.availableCopies[0].total === 0 ||
                   (error && (error as FetchBaseQueryError).status !== 404) ||
                   (cart &&
                     cart.books.length > 0 &&
                     cart.books.findIndex(
                       (book: Book) => book._id === item._id
-                    ) > -1)
+                    ) > -1) ||
+                  (borrows &&
+                    borrows.history
+                      .filter((borrowItem) => !borrowItem.returned)
+                      .findIndex(
+                        (borrowItem) => borrowItem.book._id === item._id
+                      ) > -1)
                 }
                 onClick={() =>
                   addToCart({
@@ -113,36 +126,28 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
               >
                 <LibraryAddIcon />
               </Button>
-              <BookMutationFormDialog
-                book={item}
-                disabled={
-                  user === null ||
-                  user.role[0].title !== 'Admin' ||
-                  isUpdating ||
-                  isDeleting ||
-                  isAdding
-                }
-                action="Update"
-                onSubmit={updateBook}
-              />
-              <Button
-                size="small"
-                disabled={
-                  user === null ||
-                  user.role[0].title !== 'Admin' ||
-                  isUpdating ||
-                  isDeleting ||
-                  isAdding
-                }
-                onClick={() =>
-                  deleteBook({
-                    bookId: item._id,
-                    token: authorizedToken?.accessToken as string,
-                  })
-                }
-              >
-                <DeleteIcon />
-              </Button>
+              {user && user.role[0].title === 'Admin' && (
+                <>
+                  <BookMutationFormDialog
+                    book={item}
+                    disabled={isUpdating || isDeleting || isAdding}
+                    action="Update"
+                    onSubmit={updateBook}
+                  />
+                  <Button
+                    size="small"
+                    disabled={isUpdating || isDeleting || isAdding}
+                    onClick={() =>
+                      deleteBook({
+                        bookId: item._id,
+                        token: authorizedToken?.accessToken as string,
+                      })
+                    }
+                  >
+                    <DeleteIcon />
+                  </Button>
+                </>
+              )}
             </>
           ) : (
             <Button
@@ -159,8 +164,8 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
             </Button>
           )}
           {featuredBooks.findIndex((book: Book) => item._id === book._id) >
-          -1 ? (
-            user && user.role[0].title === 'Admin' ? (
+            -1 &&
+            (user && user.role[0].title === 'Admin' ? (
               <Button
                 size="small"
                 disabled={
@@ -183,22 +188,7 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
               >
                 <StarIcon />
               </Button>
-            )
-          ) : (
-            <Button
-              size="small"
-              disabled={
-                user === null ||
-                user.role[0].title !== 'Admin' ||
-                isUpdating ||
-                isDeleting ||
-                isAdding
-              }
-              onClick={() => dispatch(addFeaturedBook(item as Book))}
-            >
-              <StarBorderIcon />
-            </Button>
-          )}
+            ))}
         </CardActions>
       </Card>
     </Grid>

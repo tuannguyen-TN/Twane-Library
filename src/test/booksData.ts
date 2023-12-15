@@ -4,7 +4,7 @@ export const booksData: Book[] = [
   {
     _id: '655d13daf50dd1ceca878b43',
     ISBN: '0756603390',
-    title: 'chaien',
+    title: 'Conan',
     edition: '1',
     category: [
       {
@@ -12,8 +12,8 @@ export const booksData: Book[] = [
         name: 'Fiction',
       },
     ],
-    description: 'something',
-    publisher: 'japa',
+    description: 'not really something',
+    publisher: 'Japan',
     author: [
       {
         _id: '6546a7febac08f6bd30c0505',
@@ -21,6 +21,11 @@ export const booksData: Book[] = [
       },
     ],
     img: 'https://upload.wikimedia.org/wikipedia/en/c/c8/Doraemon_volume_1_cover.jpg',
+    availableCopies: [
+      {
+        total: 2,
+      },
+    ],
   },
   {
     _id: '655ec8104202fd2aa0055472',
@@ -42,6 +47,11 @@ export const booksData: Book[] = [
       },
     ],
     img: 'https://upload.wikimedia.org/wikipedia/en/c/c8/Doraemon_volume_1_cover.jpg',
+    availableCopies: [
+      {
+        total: 4,
+      },
+    ],
   },
   {
     _id: '657373d24a28e2a9af4a4268',
@@ -61,6 +71,11 @@ export const booksData: Book[] = [
       {
         _id: '65476d49bcb0ab378893f206',
         fullName: 'Charles Dickens',
+      },
+    ],
+    availableCopies: [
+      {
+        total: 1,
       },
     ],
   },

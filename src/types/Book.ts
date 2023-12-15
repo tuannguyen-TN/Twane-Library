@@ -11,4 +11,7 @@ export type Book = {
   publisher: string
   author: Author[]
   img: string
+  availableCopies: {
+    total: number
+  }[]
 }

@@ -107,14 +107,16 @@ const AllBooksPage = () => {
               }
             />
           </Stack>
-          <BookMutationFormDialog
-            book={{} as unknown as Book}
-            disabled={
-              user === null || user.role[0].title !== 'Admin' || isCreating
-            }
-            action="Create"
-            onSubmit={createBook}
-          />
+          {user && user.role[0].title === 'Admin' && (
+            <BookMutationFormDialog
+              book={{} as unknown as Book}
+              disabled={
+                user === null || user.role[0].title !== 'Admin' || isCreating
+              }
+              action="Create"
+              onSubmit={createBook}
+            />
+          )}
         </Stack>
         {isLoading && (
           <Skeleton variant="rectangular" width="100%" height={400} />
