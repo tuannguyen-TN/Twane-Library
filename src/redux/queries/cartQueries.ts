@@ -55,7 +55,7 @@ const cartQueries = createApi({
     }),
     checkout: builder.mutation<{ acknowledged: boolean }, { token: string }>({
       query: ({ token }) => ({
-        url: '',
+        url: 'checkout',
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
