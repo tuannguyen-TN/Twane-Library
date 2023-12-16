@@ -31,7 +31,7 @@ export const createStore = () =>
     },
     preloadedState: {
       // cartReducer: preLoadedCartReducer,
-      featuredBooksReducer: preLoadedFeaturedBooksReducer,
+      // featuredBooksReducer: preLoadedFeaturedBooksReducer,
       userReducer: preLoadedUserReducer,
     },
     middleware: (getDefaultMiddleware) =>
