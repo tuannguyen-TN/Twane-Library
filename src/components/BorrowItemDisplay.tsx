@@ -84,9 +84,6 @@ const BorrowItemDisplay = ({ item }: Props) => {
                 bookId: item.book._id,
                 token: authorizedToken?.accessToken as string,
               })
-                .unwrap()
-                .then(() => toast.success('Book returned successfully!'))
-                .catch(() => toast.error('Book returned unsuccessfully!'))
             }
           >
             <AssignmentReturnIcon />
