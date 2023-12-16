@@ -3,6 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import SearchIcon from '@mui/icons-material/Search'
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd'
 import StarIcon from '@mui/icons-material/Star'
+import StarBorderIcon from '@mui/icons-material/StarBorder'
 import {
   Button,
   Card,
@@ -25,7 +26,10 @@ import {
   useUpdateBookMutation,
 } from '../redux/queries/bookQueries'
 import BookMutationFormDialog from './BookMutationFormDialog'
-import { removeFeaturedBook } from '../redux/reducers/featuredBooksReducer'
+import {
+  addFeaturedBook,
+  removeFeaturedBook,
+} from '../redux/reducers/featuredBooksReducer'
 import {
   useAddToCartMutation,
   useFetchCartQuery,
@@ -168,13 +172,7 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
             (user && user.role[0].title === 'Admin' ? (
               <Button
                 size="small"
-                disabled={
-                  user === null ||
-                  user.role[0].title !== 'Admin' ||
-                  isUpdating ||
-                  isDeleting ||
-                  isAdding
-                }
+                disabled={isUpdating || isDeleting || isAdding}
                 onClick={() => dispatch(removeFeaturedBook(item._id))}
               >
                 <StarIcon />
@@ -189,6 +187,15 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
                 <StarIcon />
               </Button>
             ))}
+          {user && user.role[0].title === 'Admin' && (
+            <Button
+              size="small"
+              disabled={isUpdating || isDeleting || isAdding}
+              onClick={() => dispatch(addFeaturedBook(item))}
+            >
+              <StarBorderIcon />
+            </Button>
+          )}
         </CardActions>
       </Card>
     </Grid>
