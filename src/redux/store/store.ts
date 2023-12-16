@@ -14,6 +14,7 @@ const preLoadedUserReducer: UserReducerState = JSON.parse(
   localStorage.getItem('user') || JSON.stringify(initialUserState)
 )
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const preLoadedFeaturedBooksReducer = JSON.parse(
   (localStorage.getItem('featuredBooks') as string) || JSON.stringify([])
 )
