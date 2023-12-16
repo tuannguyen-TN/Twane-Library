@@ -14,7 +14,6 @@ const preLoadedUserReducer: UserReducerState = JSON.parse(
   localStorage.getItem('user') || JSON.stringify(initialUserState)
 )
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const preLoadedFeaturedBooksReducer = JSON.parse(
   (localStorage.getItem('featuredBooks') as string) || JSON.stringify([])
 )
@@ -31,8 +30,7 @@ export const createStore = () =>
       featuredBooksReducer,
     },
     preloadedState: {
-      // cartReducer: preLoadedCartReducer,
-      // featuredBooksReducer: preLoadedFeaturedBooksReducer,
+      featuredBooksReducer: preLoadedFeaturedBooksReducer,
       userReducer: preLoadedUserReducer,
     },
     middleware: (getDefaultMiddleware) =>
@@ -48,11 +46,9 @@ export const createStore = () =>
 const store = createStore()
 
 const updateLocalStorage = () => {
-  // const cart = store.getState().cartReducer
   const featuredBooks = store.getState().featuredBooksReducer
   const userCredentials = store.getState().userReducer
 
-  // localStorage.setItem('cart', JSON.stringify(cart))
   localStorage.setItem('featuredBooks', JSON.stringify(featuredBooks))
   localStorage.setItem(
     'user',
