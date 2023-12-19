@@ -1,7 +1,5 @@
 import React from 'react'
-import SearchIcon from '@mui/icons-material/Search'
 import StarIcon from '@mui/icons-material/Star'
-import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn'
 import {
   Button,
   Card,
@@ -74,7 +72,7 @@ const BorrowItemDisplay = ({ item }: Props) => {
             size="small"
             onClick={() => navigate(`/books/${item.book._id}`)}
           >
-            <SearchIcon />
+            Learn More
           </Button>
           <Button
             size="small"
@@ -86,7 +84,7 @@ const BorrowItemDisplay = ({ item }: Props) => {
               })
             }
           >
-            <AssignmentReturnIcon />
+            Return Book
           </Button>
           {featuredBooks.findIndex((book: Book) => item.book._id === book._id) >
             -1 &&

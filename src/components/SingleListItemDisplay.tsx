@@ -91,13 +91,18 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
           <Typography>{item.description}</Typography>
           {!cartDisplay && (
             <Typography>
+              <br />
               Available copies: {item.availableCopies[0].total}
             </Typography>
           )}
         </CardContent>
         <CardActions>
           <Button size="small" onClick={() => navigate(`/books/${item._id}`)}>
-            <SearchIcon />
+            {user && user.role[0].title === 'Admin' ? (
+              <SearchIcon />
+            ) : (
+              'Learn More'
+            )}
           </Button>
           {!cartDisplay ? (
             <>
@@ -128,7 +133,11 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
                   })
                 }
               >
-                <LibraryAddIcon />
+                {user && user.role[0].title === 'Admin' ? (
+                  <LibraryAddIcon />
+                ) : (
+                  'Add To Cart'
+                )}
               </Button>
               {user && user.role[0].title === 'Admin' && (
                 <>
@@ -164,7 +173,11 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
                 })
               }
             >
-              <DeleteIcon />
+              {user && user.role[0].title === 'Admin' ? (
+                <DeleteIcon />
+              ) : (
+                'Remove From Cart'
+              )}
             </Button>
           )}
           {featuredBooks.findIndex((book: Book) => item._id === book._id) >
