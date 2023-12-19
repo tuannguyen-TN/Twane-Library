@@ -74,7 +74,7 @@ const BorrowItemDisplay = ({ item }: Props) => {
             size="small"
             onClick={() => navigate(`/books/${item.book._id}`)}
           >
-            <SearchIcon />
+            Learn More
           </Button>
           <Button
             size="small"
@@ -86,7 +86,7 @@ const BorrowItemDisplay = ({ item }: Props) => {
               })
             }
           >
-            <AssignmentReturnIcon />
+            Return Book
           </Button>
           {featuredBooks.findIndex((book: Book) => item.book._id === book._id) >
             -1 &&
