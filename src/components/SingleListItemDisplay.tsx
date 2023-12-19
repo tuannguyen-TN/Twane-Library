@@ -91,6 +91,7 @@ const SingleListItemDisplay = ({ item, cartDisplay }: Props) => {
           <Typography>{item.description}</Typography>
           {!cartDisplay && (
             <Typography>
+              <br />
               Available copies: {item.availableCopies[0].total}
             </Typography>
           )}

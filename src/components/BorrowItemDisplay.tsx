@@ -1,7 +1,5 @@
 import React from 'react'
-import SearchIcon from '@mui/icons-material/Search'
 import StarIcon from '@mui/icons-material/Star'
-import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn'
 import {
   Button,
   Card,
