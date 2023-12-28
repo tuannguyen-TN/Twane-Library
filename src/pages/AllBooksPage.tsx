@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Box,
   Pagination,
@@ -23,9 +23,12 @@ import { Book } from '../types/Book'
 import { StateType } from '../redux/store/store'
 import { useAppSelector } from '../hooks/useAppSelector'
 import AuthorMenu from '../components/AuthorMenu'
+import { useDebounce } from '../hooks/useDebounce'
 
 const AllBooksPage = () => {
   const { user } = useAppSelector((state: StateType) => state.userReducer)
+  const [search, setSearch] = useState<string>('')
+  const debouncedSearch = useDebounce(search, 2000)
   const [filterOptions, setFilterOptions] = useState<FilterBooksOptions>({
     page: 1,
     perPage: 6,
@@ -37,6 +40,15 @@ const AllBooksPage = () => {
 
   const { data, isLoading, error } = useFetchAllBooksQuery(filterOptions)
   const [createBook, { isLoading: isCreating }] = useCreateBookMutation()
+
+  useEffect(() => {
+    setFilterOptions({
+      ...filterOptions,
+      search: debouncedSearch,
+      page: 1,
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch])
 
   return (
     <div>
@@ -55,12 +67,7 @@ const AllBooksPage = () => {
             <TextField
               label="Book title"
               variant="standard"
-              onChange={(e) =>
-                setFilterOptions({
-                  ...filterOptions,
-                  search: e.target.value,
-                })
-              }
+              onChange={(e) => setSearch(e.target.value)}
             />
             <AuthorMenu
               isMultiple={false}
